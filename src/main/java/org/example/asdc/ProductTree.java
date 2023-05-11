@@ -1,80 +1,128 @@
 package org.example.asdc;
 
 public class ProductTree {
+    private Node root;
+    private static class Node {
+        private Product product;
+        private Node left;
+        private Node right;
 
-    private ProductNode root;
+        public Node(Product product) {
+            this.product = product;
+        }
+    }
 
-    public void add(Product product){
+    // Метод для обхода дерева в прямом порядке
+    public void traversePreOrder() {
+        traversePreOrder(root);
+    }
+
+    private void traversePreOrder(Node node) {
+        if (node != null) {
+            System.out.println(node.product);
+            traversePreOrder(node.left);
+            traversePreOrder(node.right);
+        }
+    }
+
+    // Метод для обхода дерева в обратном порядке
+    public void traversePostOrder() {
+        traversePostOrder(root);
+    }
+
+    private void traversePostOrder(Node node) {
+        if (node != null) {
+            traversePostOrder(node.left);
+            traversePostOrder(node.right);
+            System.out.println(node.product);
+        }
+    }
+
+    // Метод для центрированного/симметричного обхода дерева
+    public void traverseInOrder() {
+        traverseInOrder(root);
+    }
+
+    private void traverseInOrder(Node node) {
+        if (node != null) {
+            traverseInOrder(node.left);
+            System.out.println(node.product);
+            traverseInOrder(node.right);
+        }
+    }
+
+    // Метод для вставки элемента в дерево
+    public void insert(Product product) {
         root = insert(root, product);
     }
-    public Product get(Product product){
-        return search(root, product).data;
-    }
 
-    private ProductNode insert(ProductNode node, Product data) {
-        if(node == null) {
-            node = new ProductNode(data);
-        }else {
-            if(data.getId() < node.getData().getId()){
-                node.setLeft(insert(node.getLeft(), data));
-            }else if(data.getId() > node.getData().getId()){
-                node.setRight(insert(node.getRight(), data));
-            }
+    private Node insert(Node node, Product product) {
+        if (node == null) {
+            return new Node(product);
         }
+
+        if (product.compareTo(node.product) < 0) {
+            node.left = insert(node.left, product);
+        } else if (product.compareTo(node.product) > 0) {
+            node.right = insert(node.right, product);
+        }
+
         return node;
     }
 
-    public ProductNode getRoot() {
-        return root;
+    // Метод для удаления элемента из дерева
+    public void remove(int id) {
+        root = remove(root, search(id));
     }
 
-    private ProductNode search(ProductNode root, Product data){
-        if(root == null){
+    private Node remove(Node node, Product product) {
+        if (node == null) {
             return null;
         }
-        while (root != null){
-            if(data.equals(root.getData())){
-                return root;
-            }else if(data.getId() > root.getData().getId()){
-                root = root.getRight();
-            }else {
-                root = root.getLeft();
+
+        if (product.compareTo(node.product) < 0) {
+            node.left = remove(node.left, product);
+        } else if (product.compareTo(node.product) > 0) {
+            node.right = remove(node.right, product);
+        } else {
+            if (node.left == null) {
+                return node.right;
+            } else if (node.right == null) {
+                return node.left;
             }
+
+            Node temp = findMin(node.right);
+            node.product = temp.product;
+            node.right = remove(node.right, temp.product);
         }
-        return null;
+
+        return node;
     }
 
-
-    private static class ProductNode{
-        private final Product data;
-        private ProductNode left;
-        private ProductNode right;
-
-        public ProductNode(Product product){
-            this.data = product;
-            left = null;
-            right = null;
+    private Node findMin(Node node) {
+        while (node.left != null) {
+            node = node.left;
         }
 
+        return node;
+    }
+    // Метод для поиска элемента в дереве
+    public Product search(int id) {
+        return search(root, id).product;
+    }
 
-        public ProductNode getLeft() {
-            return left;
+    private Node search(Node node, int id) {
+        if (node == null || node.product.getId() == id) {
+            return node;
         }
 
-        public void setLeft(ProductNode left) {
-            this.left = left;
-        }
-
-        public ProductNode getRight() {
-            return right;
-        }
-
-        public void setRight(ProductNode right) {
-            this.right = right;
-        }
-
-        public Product getData() {
-            return data;
+        if (id < node.product.getId()) {
+            return search(node.left, id);
+        } else {
+            return search(node.right, id);
         }
     }
 }
+
+
+

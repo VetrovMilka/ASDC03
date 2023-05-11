@@ -40,6 +40,21 @@ public class Service {
         }
         return result;
     }
+    public static ProductTree getProductTree(String path) {
+        String data;
+        ProductTree result = new ProductTree();
+        try (BufferedReader reader = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
+            while((data = reader.readLine()) != null) {
+                data = data.replaceAll("\\p{C}", "");
+                Product product = csvToProduct(data);
+                result.insert(product);
+            }
+        } catch(IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     public static void writeData(String path, Product product) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(path, true));
