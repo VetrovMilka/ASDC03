@@ -25,9 +25,9 @@ public class Service {
         return null;
     }
 
-    public static List<Product> readData(String path) {
+    public static ProductLinkedList getProductLinkedList(String path) {
         String data;
-        List<Product> result = new ArrayList<>();
+        ProductLinkedList result = new ProductLinkedList();
         try (BufferedReader reader = new BufferedReader(new FileReader(path, StandardCharsets.UTF_8))) {
             while((data = reader.readLine()) != null) {
                 data = data.replaceAll("\\p{C}", "");
