@@ -108,6 +108,8 @@ public class ProductTree {
     }
     // Метод для поиска элемента в дереве
     public Product search(int id) {
+        if(search(root, id) == null)
+            return null;
         return search(root, id).product;
     }
 
